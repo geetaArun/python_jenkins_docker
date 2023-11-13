@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        // Define Docker Hub credentials
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub_id')
+        // Define the Docker image name and tag
+        DOCKER_IMAGE_NAME = 'gyelburgi/python_jenkins_docker_image'
+        DOCKER_IMAGE_TAG = 'latest'
+    }
+
+    tools {
+        dockerTool 'docker-latest'
+    }
+    
+    stages {
+        stage('Cloning our Git') {
+            steps {
+                git 'https://github.com/geetaArun/python_jenkins_docker.git'
+            }
+        }
+      
+        stage('Build Docker Image') {
+            steps {
+                // Build the Docker image using the Dockerfile in the specified directory
+                script {
+                    docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", ". -f dockerfile")
+                }
+            }
+        }
+        
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'DOCKER_HUB_CREDENTIALS_USR', passwordVariable: 'DOCKER_HUB_CREDENTIALS_PSW')]) {
+                        sh "docker login -u ${DOCKER_HUB_CREDENTIALS_USR} -p ${DOCKER_HUB_CREDENTIALS_PSW}"
+                    }
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                // Push the Docker image to Docker Hub
+                script {
+                    sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                }
+            }
+        }
+    }
+}
