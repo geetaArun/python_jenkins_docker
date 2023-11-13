@@ -50,6 +50,17 @@ pipeline {
             }
         }
         
+        stage('Remove old container') {
+            steps {
+                // remove the old cntainer
+                script {
+                   sh "docker stop ${DOCKER_CONTAINER_NAME}"
+                   sh "docker rm ${DOCKER_CONTAINER_NAME}"
+                }
+            }
+        }
+
+        
         stage('Pull and Run Docker Container') {
             steps {
                script {
