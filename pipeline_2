@@ -7,6 +7,8 @@ pipeline {
         // Define the Docker image name and tag
         DOCKER_IMAGE_NAME = 'gyelburgi/python_jenkins_docker_image'
         DOCKER_IMAGE_TAG = 'latest'
+        // Define the name of the Docker container
+        DOCKER_CONTAINER_NAME = 'python_jenkins_container'
     }
 
     tools {
@@ -45,6 +47,18 @@ pipeline {
                 script {
                     sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
                 }
+            }
+        }
+        
+        stage('Pull and Run Docker Container') {
+            steps {
+               script {
+                // Pull the Docker image from Docker Hub
+                sh "docker pull ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                
+                // Run the Docker container on a different port (e.g., 8080)
+                sh "docker run -d --name ${DOCKER_CONTAINER_NAME} -p 8085:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+               }
             }
         }
     }
