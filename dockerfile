@@ -1,3 +1,8 @@
 FROM python:3
-COPY operations.py .
-CMD [“python”, “./operations.py”]
+WORKDIR /usr/src/app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+CMD [ "python", "./operations.py" ]
