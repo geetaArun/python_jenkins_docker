@@ -14,7 +14,7 @@ def multiply(x,y):
 def divide(x,y):
     return x/y
 
-print("sum of two numbers is:", add(10,20));
+print("sum of two numbers is:", add(20,20));
 print("subtraction of 2 numbers is:", subtract(30,10));
 print("multiplication of two numbers is:", multiply(10,20));
 print("Division of two numbers is:", divide(20,10));
